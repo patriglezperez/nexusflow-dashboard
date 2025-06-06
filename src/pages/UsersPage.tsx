@@ -12,8 +12,7 @@ function UsersPage() {
   const { users, addUser } = useUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // CORRECCIÓN: newUserData debe ser de tipo Omit<User, 'id'>
-  // Esto significa que el UserForm debe enviar 'avatarUrl' y 'status'
+
   const handleAddUser = (newUserData: Omit<User, 'id'>) => {
     addUser(newUserData);
     setIsModalOpen(false);
@@ -77,7 +76,6 @@ function UsersPage() {
         onClose={() => setIsModalOpen(false)}
         title="Añadir Nuevo Usuario"
       >
-        {/* Asegúrate de que UserForm envía avatarUrl y status */}
         <UserForm onSubmit={handleAddUser} onCancel={() => setIsModalOpen(false)} />
       </Modal>
     </div>

@@ -1,20 +1,20 @@
-// src/utils/data.ts
+
 
 import { v4 as uuidv4 } from 'uuid';
 
-// --- Interfaces ---
+
 
 export interface Project {
   id: string;
   name: string;
   description: string;
   status: 'active' | 'completed' | 'on-hold' | 'pending';
-  progress: number; // 0-100
-  startDate: string; // Formato YYYY-MM-DD
-  endDate: string;   // Formato YYYY-MM-DD
-  teamMembers: string[]; // Array de IDs de usuario
-  tasksCount: number; // Total de tareas para este proyecto
-  completedTasksCount: number; // Tareas completadas para este proyecto
+  progress: number; 
+  startDate: string; 
+  endDate: string;  
+  teamMembers: string[]; 
+  tasksCount: number;
+  completedTasksCount: number; 
 }
 
 export interface Task {
@@ -24,9 +24,9 @@ export interface Task {
   description: string;
   status: 'pending' | 'in-progress' | 'completed' | 'blocked';
   priority: 'low' | 'medium' | 'high';
-  assignedTo: string; // ID de usuario
-  dueDate: string; // Formato YYYY-MM-DD
-  createdAt: string; // Formato YYYY-MM-DD
+  assignedTo: string;
+  dueDate: string; 
+  createdAt: string; 
 }
 
 export interface User {
@@ -34,17 +34,15 @@ export interface User {
   name: string;
   email: string;
   role: 'admin' | 'manager' | 'developer' | 'designer';
-  avatarUrl: string; // URL a la imagen del avatar
+  avatarUrl: string;
   status: 'active' | 'inactive';
 }
 
-// Tipo para los datos que se necesitan al crear un nuevo proyecto (excluye campos generados)
-export type NewProjectData = Omit<Project, 'id' | 'progress' | 'tasksCount' | 'completedTasksCount'>;
 
-// Tipo para los datos que se necesitan al crear una nueva tarea (excluye campos generados)
+export type NewProjectData = Omit<Project, 'id' | 'progress' | 'tasksCount' | 'completedTasksCount'>;
 export type NewTaskData = Omit<Task, 'id' | 'createdAt'>;
 
-// --- Datos Iniciales (para cuando localStorage esté vacío) ---
+
 
 const initialUsers: User[] = [
   { id: 'user-1', name: 'Juan Pérez', email: 'juan@example.com', role: 'admin', avatarUrl: 'https://i.pravatar.cc/150?img=1', status: 'active' },
@@ -113,7 +111,7 @@ const initialTasks: Task[] = [
     description: 'Crear wireframes y mockups para la aplicación móvil.',
     status: 'completed',
     priority: 'high',
-    assignedTo: 'user-4', // Ana Fernández
+    assignedTo: 'user-4', 
     dueDate: '2024-02-28',
     createdAt: '2024-01-20',
   },
@@ -124,7 +122,7 @@ const initialTasks: Task[] = [
     description: 'Implementar la pantalla de login y registro.',
     status: 'in-progress',
     priority: 'high',
-    assignedTo: 'user-3', // Carlos García
+    assignedTo: 'user-3', 
     dueDate: '2024-06-15',
     createdAt: '2024-03-10',
   },
@@ -135,7 +133,7 @@ const initialTasks: Task[] = [
     description: 'Configurar la base de datos para la aplicación.',
     status: 'pending',
     priority: 'medium',
-    assignedTo: 'user-5', // Luis Martínez
+    assignedTo: 'user-5', 
     dueDate: '2024-06-30',
     createdAt: '2024-05-01',
   },
@@ -146,7 +144,7 @@ const initialTasks: Task[] = [
     description: 'Revisar y catalogar el contenido actual de la web.',
     status: 'in-progress',
     priority: 'medium',
-    assignedTo: 'user-2', // María López
+    assignedTo: 'user-2', 
     dueDate: '2024-07-30',
     createdAt: '2024-04-05',
   },
@@ -157,7 +155,7 @@ const initialTasks: Task[] = [
     description: 'Diseñar imágenes y videos para la campaña.',
     status: 'completed',
     priority: 'high',
-    assignedTo: 'user-4', // Ana Fernández
+    assignedTo: 'user-4', 
     dueDate: '2024-01-10',
     createdAt: '2023-11-15',
   },
@@ -168,14 +166,13 @@ const initialTasks: Task[] = [
     description: 'Programar las publicaciones en Facebook e Instagram.',
     status: 'completed',
     priority: 'medium',
-    assignedTo: 'user-2', // María López
+    assignedTo: 'user-2',
     dueDate: '2024-01-25',
     createdAt: '2023-12-01',
   },
 ];
 
-// Recalcular stats iniciales basadas en initialTasks para los proyectos
-// Esto asegura que tasksCount y completedTasksCount estén correctos al inicio
+
 initialProjects.forEach(project => {
   const projectTasks = initialTasks.filter(task => task.projectId === project.id);
   project.tasksCount = projectTasks.length;
@@ -186,7 +183,7 @@ initialProjects.forEach(project => {
 });
 
 
-// --- Carga y guarda datos de/a localStorage ---
+
 
 const loadData = <T>(key: string, initialData: T[]): T[] => {
   try {
@@ -194,7 +191,6 @@ const loadData = <T>(key: string, initialData: T[]): T[] => {
     return storedData ? JSON.parse(storedData) : initialData;
   } catch (error) {
     console.error(`Error loading data from localStorage for key "${key}":`, error);
-    // En caso de error (ej. JSON corrupto), se retorna la data inicial
     return initialData;
   }
 };
@@ -207,15 +203,13 @@ const saveData = <T>(key: string, data: T[]): void => {
   }
 };
 
-// Variables exportadas que se actualizarán y persistirán
+
 export let users: User[] = loadData('users', initialUsers);
 export let projects: Project[] = loadData('projects', initialProjects);
 export let tasks: Task[] = loadData('tasks', initialTasks);
 
 
-// --- Funciones de Utilidad y CRUD ---
 
-// Proyectos
 export const addProject = (data: NewProjectData): Project => {
     const newProject: Project = {
         id: uuidv4(),
@@ -224,7 +218,7 @@ export const addProject = (data: NewProjectData): Project => {
         status: data.status,
         startDate: data.startDate,
         endDate: data.endDate,
-        teamMembers: data.teamMembers, // <--- Aquí se asignan los teamMembers
+        teamMembers: data.teamMembers, 
         progress: 0,
         tasksCount: 0,
         completedTasksCount: 0
@@ -246,8 +240,8 @@ export const updateProject = (updatedProject: Project): boolean => {
 
 export const deleteProject = (id: string): boolean => {
     const initialProjectsLength = projects.length;
-    projects = projects.filter(p => p.id !== id); // Filtra el proyecto
-    tasks = tasks.filter(t => t.projectId !== id); // Elimina todas las tareas asociadas
+    projects = projects.filter(p => p.id !== id); 
+    tasks = tasks.filter(t => t.projectId !== id); 
     saveData('projects', projects);
     saveData('tasks', tasks);
     return projects.length < initialProjectsLength;
@@ -262,12 +256,12 @@ export const getProjectById = (id: string): Project | undefined => {
 export const addTask = (data: NewTaskData): Task => {
     const newTask: Task = {
         id: uuidv4(),
-        createdAt: new Date().toISOString().slice(0, 10), // Fecha actual YYYY-MM-DD
+        createdAt: new Date().toISOString().slice(0, 10),
         ...data,
     };
     tasks.push(newTask);
     saveData('tasks', tasks);
-    recalculateProjectStats(newTask.projectId); // Recalcula el progreso del proyecto
+    recalculateProjectStats(newTask.projectId); 
     return newTask;
 };
 
@@ -276,7 +270,7 @@ export const updateTask = (updatedTask: Task): boolean => {
     if (index !== -1) {
         tasks[index] = updatedTask;
         saveData('tasks', tasks);
-        recalculateProjectStats(updatedTask.projectId); // Recalcula el progreso del proyecto
+        recalculateProjectStats(updatedTask.projectId); 
         return true;
     }
     return false;
@@ -288,7 +282,7 @@ export const deleteTask = (id: string): boolean => {
     tasks = tasks.filter(t => t.id !== id);
     saveData('tasks', tasks);
     if (taskToDelete) {
-        recalculateProjectStats(taskToDelete.projectId); // Recalcula el progreso del proyecto
+        recalculateProjectStats(taskToDelete.projectId); 
     }
     return tasks.length < initialTasksLength;
 };
@@ -322,8 +316,7 @@ export const updateUser = (updatedUser: User): boolean => {
 export const deleteUser = (id: string): boolean => {
     const initialUsersLength = users.length;
     users = users.filter(u => u.id !== id);
-    // Opcional: Asignar tareas a un usuario por defecto o eliminarlas si un usuario se elimina
-    // tasks = tasks.map(t => t.assignedTo === id ? { ...t, assignedTo: 'unassigned-user-id' } : t);
+  
     saveData('users', users);
     return users.length < initialUsersLength;
 };
@@ -333,9 +326,7 @@ export const getUserById = (id: string): User | undefined => {
 };
 
 
-// --- Funciones para el Dashboard ---
 
-// Calcula el progreso de un proyecto basado en sus tareas
 export const recalculateProjectStats = (projectId: string) => {
     const project = projects.find(p => p.id === projectId);
     if (project) {
@@ -345,7 +336,7 @@ export const recalculateProjectStats = (projectId: string) => {
         project.progress = project.tasksCount > 0
             ? Math.round((project.completedTasksCount / project.tasksCount) * 100)
             : 0;
-        saveData('projects', projects); // Guarda el proyecto actualizado
+        saveData('projects', projects); 
     }
 };
 

@@ -1,28 +1,27 @@
-// src/pages/ProjectsPage.tsx
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Project } from '../utils/data'; // Solo la interfaz, los datos vienen del contexto
+import { Project } from '../utils/data'; 
 import Table from '../components/ui/Table';
 import ProgressBar from '../components/ui/ProgressBar';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import ProjectForm from '../components/specific/ProjectForm';
-import { useProjects } from '../hooks/useProjects'; // Asegúrate de que este hook ya exponga addProject
-import { useUsers } from '../hooks/useUsers'; // Para obtener la lista de usuarios
+import { useProjects } from '../hooks/useProjects'; 
+import { useUsers } from '../hooks/useUsers'; 
 import { FaPlus } from 'react-icons/fa';
 
 function ProjectsPage() {
   const navigate = useNavigate();
-  // Obtén projects y addProject del contexto
   const { projects, addProject } = useProjects();
   const { getUserById } = useUsers();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // handleAddProject recibirá el tipo NewProjectData de ProjectForm
-  const handleAddProject = (newProjectData: Parameters<typeof addProject>[0]) => { // Obtiene el tipo del parámetro de addProject
-    addProject(newProjectData); // Llama a la función del contexto
+
+  const handleAddProject = (newProjectData: Parameters<typeof addProject>[0]) => {
+    addProject(newProjectData); 
     setIsModalOpen(false);
   };
 
@@ -38,9 +37,9 @@ function ProjectsPage() {
   };
 
   const getTeamMembersNames = (memberIds: string[]): string => {
-    // Filtra IDs nulos/undefined antes de mapear y busca el nombre del usuario
+    
     return memberIds
-      .filter(id => id) // Asegura que el ID no sea nulo o indefinido
+      .filter(id => id) 
       .map(id => getUserById(id)?.name || 'Desconocido')
       .join(', ');
   };
@@ -58,7 +57,7 @@ function ProjectsPage() {
     },
     { header: 'Fecha Fin', accessor: (row: Project) => row.endDate, className: 'text-gray-600 w-28 whitespace-nowrap' },
     { header: 'Miembros', accessor: (row: Project) => getTeamMembersNames(row.teamMembers), className: 'text-gray-600 max-w-[150px] truncate' },
-  ], [projects, getUserById]); // Dependencias para memoizar la tabla
+  ], [projects, getUserById]); 
 
   const handleRowClick = (project: Project) => {
     navigate(`/projects/${project.id}`);
@@ -73,7 +72,7 @@ function ProjectsPage() {
       </div>
 
       <Table
-        data={projects} // Los proyectos ya vienen del contexto
+        data={projects} 
         columns={columns}
         emptyMessage="No hay proyectos registrados."
         onRowClick={handleRowClick}
@@ -84,7 +83,7 @@ function ProjectsPage() {
         onClose={() => setIsModalOpen(false)}
         title="Añadir Nuevo Proyecto"
       >
-        {/* ProjectForm ya espera el tipo NewProjectData */}
+
         <ProjectForm onSubmit={handleAddProject} onCancel={() => setIsModalOpen(false)} />
       </Modal>
     </div>

@@ -1,15 +1,14 @@
-// src/pages/ProjectDetailPage.tsx
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Project,
   Task,
-  // Ya no necesitas importar getProjectById directamente si lo obtienes del contexto
 } from '../utils/data';
 
 import { useTasks } from '../hooks/useTasks';
-import { useUsers } from '../hooks/useUsers'; // Para obtener la lista de usuarios
-import { useProjects } from '../hooks/useProjects'; // Para acceder a los proyectos y funciones
+import { useUsers } from '../hooks/useUsers'; 
+import { useProjects } from '../hooks/useProjects'; 
 
 import ProgressBar from '../components/ui/ProgressBar';
 import Badge from '../components/ui/Badge';
@@ -20,15 +19,15 @@ import TaskForm from '../components/specific/TaskForm';
 import { FaArrowLeft, FaPlus, FaTrashAlt } from 'react-icons/fa';
 
 function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>(); // El ID de la URL
+  const { id } = useParams<{ id: string }>(); 
   const navigate = useNavigate();
 
-  const { users, getUserById: getUserByIdFromContext } = useUsers(); // Obtener usuarios y su getter
+  const { users, getUserById: getUserByIdFromContext } = useUsers(); 
   const { tasks, addTask } = useTasks();
-  // Obtener proyectos y funciones del contexto. projects se actualizará si se añade uno en el contexto.
+
   const { projects, deleteProject, refreshProjects } = useProjects();
 
-  // ***** INICIO DE LOS CONSOLE.LOG PARA DEPURACIÓN *****
+
   useEffect(() => {
     console.log("ProjectDetailPage - ID de la URL:", id);
     console.log("ProjectDetailPage - Todos los proyectos cargados en el contexto:", projects);
@@ -39,11 +38,7 @@ function ProjectDetailPage() {
     if (!foundProject) {
       console.warn("ProjectDetailPage: ¡ATENCIÓN! No se encontró el proyecto con ID:", id);
     }
-  }, [id, projects]); // Estos logs se ejecutarán cada vez que el ID de la URL o el array 'projects' cambien.
-  // ***** FIN DE LOS CONSOLE.LOG PARA DEPURACIÓN *****
-
-
-  // Busca el proyecto en el array de proyectos del contexto
+  }, [id, projects]);
   const project = projects.find(p => p.id === id);
   const projectTasks = tasks.filter(task => task.projectId === id);
 
@@ -60,10 +55,10 @@ function ProjectDetailPage() {
     if (!project) return;
 
     if (window.confirm(`¿Estás seguro de que quieres eliminar el proyecto "${project.name}" y todas sus tareas asociadas? Esta acción no se puede deshacer.`)) {
-      const deleted = deleteProject(project.id); // Llama a la función del contexto/hook
+      const deleted = deleteProject(project.id); 
       if (deleted) {
         alert('Proyecto eliminado exitosamente.');
-        navigate('/projects'); // Redirige a la lista de proyectos
+        navigate('/projects'); 
       } else {
         alert('Error: No se pudo eliminar el proyecto.');
       }
@@ -71,7 +66,6 @@ function ProjectDetailPage() {
   };
 
   if (!project) {
-    // Si project es undefined, muestra el mensaje de "Proyecto no encontrado"
     return (
       <div className="p-6 bg-white rounded-2xl shadow-lg min-h-[calc(100vh-160px)] flex flex-col items-center justify-center">
         <h2 className="text-3xl font-bold text-gray-800 mb-4">Proyecto no encontrado</h2>
@@ -158,7 +152,6 @@ function ProjectDetailPage() {
           </div>
         </div>
 
-        {/* Sección del Equipo del Proyecto */}
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Equipo del Proyecto</h3>
           <ul className="space-y-3">
