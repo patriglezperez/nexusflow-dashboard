@@ -6,20 +6,19 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx", // Esto es crucial para que TypeScript entienda el JSX de React
+    "jsx": "react-jsx", 
 
-    /* Linting */
+
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"], // Incluye todos los archivos TypeScript en la carpeta src
-  "references": [{ "path": "./tsconfig.node.json" }] // Si Vite te generó tsconfig.node.json
+  "include": ["src"], 
+  "references": [{ "path": "./tsconfig.node.json" }] 
 }
