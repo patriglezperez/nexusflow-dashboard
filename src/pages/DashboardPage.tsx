@@ -7,18 +7,24 @@ function DashboardPage() {
     <div className="pt-6 pb-6 h-full flex flex-col"> 
       <h2 className="text-3xl font-bold text-gray-800 mb-8"></h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <a href="/projects">
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">Proyectos Activos</h3>
-          <p className="text-5xl font-extrabold text-primary">12</p>
+          <p className="text-5xl font-extrabold text-primary">5</p>
         </div>
+        </a>
+        <a href="/tasks">
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">Tareas Pendientes</h3>
-          <p className="text-5xl font-extrabold text-warning">34</p>
+          <p className="text-5xl font-extrabold text-warning">10</p>
         </div>
+        </a>
+        <a href="/users">
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">Miembros del Equipo</h3>
-          <p className="text-5xl font-extrabold text-success">8</p>
+          <p className="text-5xl font-extrabold text-success">5</p>
         </div>
+        </a>
       </div>
 
       <div className="bg-white-ish p-6 rounded-2xl shadow-lg border border-gray-200 flex-1"> 

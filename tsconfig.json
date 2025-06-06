@@ -20,5 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"], // Incluye todos los archivos TypeScript en la carpeta src
+  "references": [{ "path": "./tsconfig.node.json" }] // Si Vite te generó tsconfig.node.json
 }
