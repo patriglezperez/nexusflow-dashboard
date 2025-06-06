@@ -1,9 +1,15 @@
-
-import React, { useState } from 'react';
+// src/pages/ProjectDetailPage.tsx
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProjectById, Task, Project, users as allUsersData, projects as allProjectsData } from '../utils/data';
-import { useTasks } from '../hooks/useTasks'; 
-import { useUsers } from '../hooks/useUsers'; 
+import {
+  Project,
+  Task,
+  // Ya no necesitas importar getProjectById directamente si lo obtienes del contexto
+} from '../utils/data';
+
+import { useTasks } from '../hooks/useTasks';
+import { useUsers } from '../hooks/useUsers'; // Para obtener la lista de usuarios
+import { useProjects } from '../hooks/useProjects'; // Para acceder a los proyectos y funciones
 
 import ProgressBar from '../components/ui/ProgressBar';
 import Badge from '../components/ui/Badge';
@@ -11,26 +17,61 @@ import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import TaskForm from '../components/specific/TaskForm';
-import { FaArrowLeft, FaPlus } from 'react-icons/fa';
+import { FaArrowLeft, FaPlus, FaTrashAlt } from 'react-icons/fa';
 
 function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // El ID de la URL
   const navigate = useNavigate();
 
+  const { users, getUserById: getUserByIdFromContext } = useUsers(); // Obtener usuarios y su getter
+  const { tasks, addTask } = useTasks();
+  // Obtener proyectos y funciones del contexto. projects se actualizará si se añade uno en el contexto.
+  const { projects, deleteProject, refreshProjects } = useProjects();
 
-  const { users, getUserById: getUserByIdFromContext } = useUsers();
-  const { tasks, addTask, getTasksByProjectId } = useTasks();
-  const project = id ? getProjectById(id) : undefined;
-  const projectTasks = id ? getTasksByProjectId(id) : [];
+  // ***** INICIO DE LOS CONSOLE.LOG PARA DEPURACIÓN *****
+  useEffect(() => {
+    console.log("ProjectDetailPage - ID de la URL:", id);
+    console.log("ProjectDetailPage - Todos los proyectos cargados en el contexto:", projects);
+
+    const foundProject = projects.find(p => p.id === id);
+    console.log("ProjectDetailPage - Resultado de la búsqueda de proyecto por ID:", foundProject);
+
+    if (!foundProject) {
+      console.warn("ProjectDetailPage: ¡ATENCIÓN! No se encontró el proyecto con ID:", id);
+    }
+  }, [id, projects]); // Estos logs se ejecutarán cada vez que el ID de la URL o el array 'projects' cambien.
+  // ***** FIN DE LOS CONSOLE.LOG PARA DEPURACIÓN *****
+
+
+  // Busca el proyecto en el array de proyectos del contexto
+  const project = projects.find(p => p.id === id);
+  const projectTasks = tasks.filter(task => task.projectId === id);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddTask = (newTaskData: Omit<Task, 'id' | 'createdAt'>) => {
-    addTask(newTaskData);
-    setIsModalOpen(false);
+    if (project) {
+      addTask({ ...newTaskData, projectId: project.id });
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleDeleteProject = () => {
+    if (!project) return;
+
+    if (window.confirm(`¿Estás seguro de que quieres eliminar el proyecto "${project.name}" y todas sus tareas asociadas? Esta acción no se puede deshacer.`)) {
+      const deleted = deleteProject(project.id); // Llama a la función del contexto/hook
+      if (deleted) {
+        alert('Proyecto eliminado exitosamente.');
+        navigate('/projects'); // Redirige a la lista de proyectos
+      } else {
+        alert('Error: No se pudo eliminar el proyecto.');
+      }
+    }
   };
 
   if (!project) {
+    // Si project es undefined, muestra el mensaje de "Proyecto no encontrado"
     return (
       <div className="p-6 bg-white rounded-2xl shadow-lg min-h-[calc(100vh-160px)] flex flex-col items-center justify-center">
         <h2 className="text-3xl font-bold text-gray-800 mb-4">Proyecto no encontrado</h2>
@@ -58,12 +99,6 @@ function ProjectDetailPage() {
     return user ? user.name : 'Sin asignar';
   };
 
-  const getProjectName = (projectId: string): string => {
-    const proj = allProjectsData.find(p => p.id === projectId);
-    return proj ? proj.name : 'Proyecto Desconocido';
-  };
-
-
   const taskColumns = React.useMemo(() => [
     { header: 'Tarea', accessor: (row: Task) => row.name, className: 'font-medium text-gray-900 max-w-[250px] truncate' },
     { header: 'Estado', accessor: (row: Task) => renderStatus(row.status), className: 'w-auto' },
@@ -78,15 +113,24 @@ function ProjectDetailPage() {
     },
     { header: 'Asignado a', accessor: (row: Task) => getAssigneeName(row.assignedTo), className: 'text-gray-700 max-w-[150px] truncate' },
     { header: 'Fecha Límite', accessor: (row: Task) => row.dueDate, className: 'text-gray-600 w-28' },
-  ], [projectTasks, users]); 
+  ], [projectTasks, users]); // Dependencias para memoizar la tabla
 
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
-      <div className="flex items-center mb-6">
-        <Button variant="ghost" onClick={() => navigate('/projects')} iconLeft={<FaArrowLeft />} className="mr-4">
-          <span className="text-lg">Volver</span>
+      <div className="flex items-center mb-6 justify-between">
+        <div className="flex items-center">
+          <Button variant="ghost" onClick={() => navigate('/projects')} iconLeft={<FaArrowLeft />} className="mr-4">
+            <span className="text-lg">Volver</span>
+          </Button>
+          <h2 className="text-3xl font-bold text-gray-800">{project.name}</h2>
+        </div>
+        <Button
+          variant="danger"
+          onClick={handleDeleteProject}
+          iconLeft={<FaTrashAlt />}
+        >
+          Eliminar Proyecto
         </Button>
-        <h2 className="text-3xl font-bold text-gray-800">{project.name}</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -114,19 +158,30 @@ function ProjectDetailPage() {
           </div>
         </div>
 
+        {/* Sección del Equipo del Proyecto */}
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Equipo del Proyecto</h3>
           <ul className="space-y-3">
-            {project.teamMembers.map(memberId => {
-              const member = getUserByIdFromContext(memberId);
-              return (
-                <li key={memberId} className="flex items-center text-gray-700">
-                  <img src={member?.avatarUrl} alt={member?.name} className="w-8 h-8 rounded-full mr-3 border border-gray-300" />
-                  <span className="font-medium">{member?.name}</span>
-                  <Badge text={member?.role.toUpperCase() || ''} variant="secondary" className="ml-2" />
-                </li>
-              );
-            })}
+            {project.teamMembers && project.teamMembers.length > 0 ? (
+              project.teamMembers.map(memberId => {
+                const member = getUserByIdFromContext(memberId);
+                return (
+                  <li key={memberId} className="flex items-center text-gray-700">
+                    {member ? (
+                      <>
+                        <img src={member.avatarUrl} alt={member.name} className="w-8 h-8 rounded-full mr-3 border border-gray-300" />
+                        <span className="font-medium">{member.name}</span>
+                        <Badge text={member.role.toUpperCase()} variant="secondary" className="ml-2" />
+                      </>
+                    ) : (
+                      <span className="text-gray-500">Miembro Desconocido ({memberId})</span>
+                    )}
+                  </li>
+                );
+              })
+            ) : (
+              <p className="text-gray-500 text-sm">No se han asignado miembros a este proyecto.</p>
+            )}
           </ul>
         </div>
       </div>

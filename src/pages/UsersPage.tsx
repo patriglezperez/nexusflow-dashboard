@@ -1,19 +1,20 @@
-
 import React, { useState } from 'react';
-import { User } from '../utils/data'; 
+import { User } from '../utils/data';
 import Table from '../components/ui/Table';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
-import Modal from '../components/ui/Modal'; 
-import UserForm from '../components/specific/UserForm'; 
-import { useUsers } from '../hooks/useUsers'; 
+import Modal from '../components/ui/Modal';
+import UserForm from '../components/specific/UserForm';
+import { useUsers } from '../hooks/useUsers';
 import { FaPlus } from 'react-icons/fa';
 
 function UsersPage() {
-  const { users, addUser } = useUsers(); 
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const { users, addUser } = useUsers();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAddUser = (newUserData: Omit<User, 'id' | 'avatarUrl' | 'status'>) => {
+  // CORRECCIÓN: newUserData debe ser de tipo Omit<User, 'id'>
+  // Esto significa que el UserForm debe enviar 'avatarUrl' y 'status'
+  const handleAddUser = (newUserData: Omit<User, 'id'>) => {
     addUser(newUserData);
     setIsModalOpen(false);
   };
@@ -66,7 +67,7 @@ function UsersPage() {
         </Button>
       </div>
       <Table
-        data={users} 
+        data={users}
         columns={columns}
         emptyMessage="No hay usuarios registrados."
       />
@@ -76,6 +77,7 @@ function UsersPage() {
         onClose={() => setIsModalOpen(false)}
         title="Añadir Nuevo Usuario"
       >
+        {/* Asegúrate de que UserForm envía avatarUrl y status */}
         <UserForm onSubmit={handleAddUser} onCancel={() => setIsModalOpen(false)} />
       </Modal>
     </div>
