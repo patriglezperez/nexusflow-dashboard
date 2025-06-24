@@ -27,7 +27,7 @@ function TasksPage() {
   const renderStatus = (status: Task['status']): React.ReactNode => {
     let variant: 'info' | 'success' | 'warning' | 'danger' | 'secondary' = 'secondary';
     switch (status) {
-      case 'in-progress': variant = 'info'; break;
+      case 'progress': variant = 'info'; break;
       case 'completed': variant = 'success'; break;
       case 'pending': variant = 'warning'; break;
       case 'blocked': variant = 'danger'; break;

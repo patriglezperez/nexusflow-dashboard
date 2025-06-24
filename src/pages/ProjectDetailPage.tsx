@@ -80,7 +80,7 @@ function ProjectDetailPage() {
   const renderStatus = (status: Project['status'] | Task['status']): React.ReactNode => {
     let variant: 'info' | 'success' | 'warning' | 'danger' | 'secondary' | 'primary' = 'secondary';
     switch (status) {
-      case 'active': case 'in-progress': variant = 'info'; break;
+      case 'active': case 'progress': variant = 'info'; break;
       case 'completed': variant = 'success'; break;
       case 'on-hold': case 'pending': variant = 'warning'; break;
       case 'blocked': variant = 'danger'; break;

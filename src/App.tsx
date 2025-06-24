@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
@@ -8,55 +7,101 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import TasksPage from './pages/TasksPage';
 import UsersPage from './pages/UsersPage';
 import SettingsPage from './pages/SettingsPage';
-
+import LoginPage from './pages/LoginPage';
 
 import Sidebar from './components/layout/Sidebar';
 import Navbar from './components/layout/NavBar';
 
+import { useAuth } from './contexts/AuthContext';
+
+
+interface PrivateRouteProps {
+  children: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
+  }
+
+  return isAuthenticated ? (children) : <Navigate to="/login" replace />;
+};
+
+
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated, isLoading } = useAuth(); 
 
   const handleCloseMobileMenu = () => {
-    setMobileMenuOpen(false); 
+    setMobileMenuOpen(false);
   };
+
+  if (!isAuthenticated && !isLoading && window.location.pathname !== '/login') {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
 
   return (
     <Router>
-
       <div className="flex min-h-screen bg-light p-4 lg:p-6">
         <div className="flex flex-1 rounded-3xl shadow-2xl overflow-hidden bg-white">
-          <Sidebar
-            isOpen={true} 
-            onClose={handleCloseMobileMenu}
-            className="hidden md:flex" 
-          />
+
+          {isAuthenticated && (
+            <Sidebar
+              isOpen={true}
+              onClose={handleCloseMobileMenu}
+              className="hidden md:flex"
+            />
+          )}
 
           <div className="flex-1 flex flex-col min-w-0">
-            <Navbar onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+            {isAuthenticated && (
+              <Navbar onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+            )}
 
             <main className="flex-1 px-6 pb-6 overflow-auto">
               <Routes>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/projects/:id" element={<ProjectDetailPage />} />
-                <Route path="/tasks" element={<TasksPage />} />
-                <Route path="/users" element={<UsersPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="*" element={
+                <Route path="/login" element={<LoginPage />} />
+
+                <Route path="/" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+                <Route path="/projects" element={<PrivateRoute><ProjectsPage /></PrivateRoute>} />
+                <Route path="/projects/:id" element={<PrivateRoute><ProjectDetailPage /></PrivateRoute>} />
+                <Route path="/tasks" element={<PrivateRoute><TasksPage /></PrivateRoute>} />
+                <Route path="/users" element={<PrivateRoute><UsersPage /></PrivateRoute>} />
+                <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
+
+      
+                <Route path="*" element={isAuthenticated ? (
                   <div className="p-8 text-center text-gray-700 h-full flex flex-col justify-center items-center">
                     <h2 className="text-3xl font-bold mb-4">404 - Página no encontrada</h2>
                     <p>Lo sentimos, la página que buscas no existe.</p>
                   </div>
-                } />
+                ) : (
+                    <Navigate to="/login" replace />
+                )} />
               </Routes>
             </main>
           </div>
 
-          <Sidebar
-            isOpen={mobileMenuOpen}
-            onClose={handleCloseMobileMenu}
-            className="md:hidden" 
-          />
+          {isAuthenticated && (
+            <Sidebar
+              isOpen={mobileMenuOpen}
+              onClose={handleCloseMobileMenu}
+              className="md:hidden"
+            />
+          )}
         </div>
       </div>
     </Router>

@@ -22,7 +22,7 @@ export interface Task {
   projectId: string;
   name: string;
   description: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'blocked';
+  status: 'pending' | 'progress' | 'completed' | 'blocked';
   priority: 'low' | 'medium' | 'high';
   assignedTo: string;
   dueDate: string; 
@@ -120,7 +120,7 @@ const initialTasks: Task[] = [
     projectId: 'proj-1',
     name: 'Desarrollo Frontend Login',
     description: 'Implementar la pantalla de login y registro.',
-    status: 'in-progress',
+    status: 'progress',
     priority: 'high',
     assignedTo: 'user-3', 
     dueDate: '2024-06-15',
@@ -142,7 +142,7 @@ const initialTasks: Task[] = [
     projectId: 'proj-2',
     name: 'Auditoría de Contenido Existente',
     description: 'Revisar y catalogar el contenido actual de la web.',
-    status: 'in-progress',
+    status: 'progress',
     priority: 'medium',
     assignedTo: 'user-2', 
     dueDate: '2024-07-30',
@@ -342,7 +342,7 @@ export const recalculateProjectStats = (projectId: string) => {
 
 export const getDashboardStats = () => {
     const proyectosActivos = projects.filter(p => p.status === 'active' || p.status === 'on-hold' || p.status === 'pending').length;
-    const tareasPendientes = tasks.filter(t => t.status === 'pending' || t.status === 'in-progress' || t.status === 'blocked').length;
+    const tareasPendientes = tasks.filter(t => t.status === 'pending' || t.status === 'progress' || t.status === 'blocked').length;
     const miembrosEquipo = users.filter(u => u.status === 'active').length;
     return {
         proyectosActivos,

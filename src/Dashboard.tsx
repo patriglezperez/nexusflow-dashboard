@@ -8,7 +8,7 @@ import {
   DraggableStateSnapshot,
 } from "@hello-pangea/dnd";
 
-const columns = ["To Do", "In Progress", "Done"];
+const columns = ["To Do", "Progress", "Done"];
 
 interface Subtask {
   id: number;
