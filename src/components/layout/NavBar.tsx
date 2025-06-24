@@ -52,9 +52,6 @@ function Navbar({ onMenuToggle }: NavbarProps) {
           alt="Avatar"
           className="w-12 h-12 rounded-full border-2 border-primary shadow-md"
         />
-        <Button variant="ghost" onClick={handleLogout} className="hidden sm:inline-flex">
-          Cerrar Sesión
-        </Button>
       </div>
     </header>
   );
