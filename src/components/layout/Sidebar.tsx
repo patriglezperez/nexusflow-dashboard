@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaTimes } from 'react-icons/fa';
-
+import { FaTimes, FaSignOutAlt } from 'react-icons/fa'; 
+import { useAuth } from '../../contexts/AuthContext'; 
+import { useNavigate } from 'react-router-dom'; 
 
 interface SidebarProps {
   isOpen: boolean;
@@ -10,8 +10,10 @@ interface SidebarProps {
   className?: string;
 }
 
-
 function Sidebar({ isOpen, onClose, className }: SidebarProps) {
+  const { logout } = useAuth(); 
+  const navigate = useNavigate(); 
+
   const navItems = [
     { name: 'Dashboard', icon: '📊', path: '/' },
     { name: 'Proyectos', icon: '🚀', path: '/projects' },
@@ -24,6 +26,12 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
     fixed inset-0 bg-black bg-opacity-50 z-40
     ${isOpen && className?.includes('md:hidden') ? 'block' : 'hidden'}
   `;
+
+  const handleLogout = () => {
+    logout();
+    onClose(); 
+    navigate('/login'); 
+  };
 
   return (
     <>
@@ -46,8 +54,7 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
         )}
 
         <div className="text-3xl font-extrabold mb-10 text-white tracking-wide">
-          NexusFlow
-        </div>
+          NexusFlow</div>
         <nav className="flex-1">
           <ul>
             {navItems.map((item) => (
@@ -70,8 +77,11 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
           </ul>
         </nav>
         <div className="mt-auto pt-6 border-t border-gray-700">
-          <button className="w-full text-left p-3 rounded-lg hover:bg-gray-700 text-gray-300 transition-colors duration-200" onClick={onClose}>
-            Cerrar Sesión
+          <button
+            className="w-full text-left p-3 rounded-lg hover:bg-gray-700 text-gray-300 transition-colors duration-200 flex items-center"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt className="mr-3" /> Cerrar Sesión
           </button>
         </div>
       </aside>

@@ -71,7 +71,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, initialProjectI
   const userOptions = users.map(u => ({ value: u.id, label: u.name }));
   const statusOptions = [
     { value: 'pending', label: 'Pendiente' },
-    { value: 'in-progress', label: 'En Progreso' },
+    { value: 'progress', label: 'En Progreso' },
     { value: 'completed', label: 'Completada' },
     { value: 'blocked', label: 'Bloqueada' },
   ];
