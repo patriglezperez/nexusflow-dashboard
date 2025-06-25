@@ -1,16 +1,10 @@
-
-import React from 'react';
-import Button from '../components/ui/Button';
-import FormField from '../components/ui/FormField';
-import Input from '../components/ui/Input';
-import Select from '../components/ui/Select';
 import UserForm from '../components/specific/UserForm';
 import { useAuth } from '../contexts/AuthContext';
 import { useUsers } from '../hooks/useUsers';
 import { User } from '../utils/data';
 
 function SettingsPage() {
-  const { user, setCurrentUser } = useAuth(); 
+  const { user, setCurrentUser } = useAuth();
   const { updateUser } = useUsers();
 
   const handleUpdateProfile = (updatedUserData: any) => {
@@ -23,7 +17,7 @@ function SettingsPage() {
 
       const success = updateUser(updatedUserWithId);
       if (success) {
-        setCurrentUser(updatedUserWithId); 
+        setCurrentUser(updatedUserWithId);
         alert('Perfil actualizado exitosamente.');
       } else {
         alert('Error al actualizar el perfil.');
