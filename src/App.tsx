@@ -44,21 +44,10 @@ function App() {
     setMobileMenuOpen(false);
   };
 
-  if (!isAuthenticated && !isLoading && !isLoginPage) {
-    return (
-      <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Router>
-    );
-  }
 
   return (
     <Router>
       <div className="flex min-h-screen p-4 lg:p-6 bg-gradient-to-br from-blue-300 via-green-300 to-yellow-300">
-      
         <div className={`flex flex-1 rounded-3xl overflow-hidden ${isLoginPage ? '' : 'bg-white shadow-2xl'}`}>
 
           {isAuthenticated && (
