@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import {
   User,
   users as initialUsers,
@@ -6,7 +6,6 @@ import {
   updateUser as updateUserToData,
   deleteUser as deleteUserFromData,
 } from '../utils/data';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface UserContextType {
   users: User[];

@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
 import { User, users as initialUsersData } from '../utils/data';
 
@@ -9,7 +8,7 @@ export interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   error: string | null;
-  setCurrentUser: (user: User | null) => void; 
+  setCurrentUser: (user: User | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +27,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const DEV_USER_PASSWORD = import.meta.env.VITE_PASSWORD; 
+
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
@@ -43,7 +44,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const foundUser = initialUsersData.find(u => u.email === email);
 
-    if (foundUser && password === 'PAT_25_') {
+    if (foundUser && password === DEV_USER_PASSWORD) {
       setUser(foundUser);
       setIsAuthenticated(true);
       localStorage.setItem('currentUser', JSON.stringify(foundUser));
@@ -62,7 +63,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.removeItem('currentUser');
   }, []);
 
-  // Nueva función para actualizar el usuario actual
   const setCurrentUser = useCallback((updatedUser: User | null) => {
     setUser(updatedUser);
     if (updatedUser) {
@@ -72,7 +72,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-
   const contextValue: AuthContextType = {
     user,
     isAuthenticated,
@@ -80,7 +79,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     logout,
     isLoading,
     error,
-    setCurrentUser, 
+    setCurrentUser,
   };
 
   return (

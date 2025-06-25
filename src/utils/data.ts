@@ -1,8 +1,4 @@
-
-
 import { v4 as uuidv4 } from 'uuid';
-
-
 
 export interface Project {
   id: string;
@@ -38,11 +34,8 @@ export interface User {
   status: 'active' | 'inactive';
 }
 
-
 export type NewProjectData = Omit<Project, 'id' | 'progress' | 'tasksCount' | 'completedTasksCount'>;
 export type NewTaskData = Omit<Task, 'id' | 'createdAt'>;
-
-
 
 const initialUsers: User[] = [
   { id: 'user-1', name: 'Juan Pérez', email: 'juan@example.com', role: 'admin', avatarUrl: 'https://i.pravatar.cc/150?img=1', status: 'active' },
@@ -100,6 +93,55 @@ const initialProjects: Project[] = [
     teamMembers: ['user-2', 'user-4'],
     tasksCount: 2,
     completedTasksCount: 2,
+  },
+  // --- NUEVOS PROYECTOS ---
+  {
+    id: 'proj-5',
+    name: 'Optimización de Base de Datos',
+    description: 'Mejorar el rendimiento y la escalabilidad de la base de datos principal.',
+    status: 'active',
+    progress: 60,
+    startDate: '2024-04-01',
+    endDate: '2024-08-31',
+    teamMembers: ['user-3', 'user-5'],
+    tasksCount: 0,
+    completedTasksCount: 0,
+  },
+  {
+    id: 'proj-6',
+    name: 'Desarrollo de Módulo de Informes',
+    description: 'Creación de un nuevo módulo de informes personalizables para clientes.',
+    status: 'pending',
+    progress: 25,
+    startDate: '2024-05-10',
+    endDate: '2024-11-30',
+    teamMembers: ['user-1', 'user-3', 'user-2'],
+    tasksCount: 0,
+    completedTasksCount: 0,
+  },
+  {
+    id: 'proj-7',
+    name: 'Auditoría de Seguridad de la Red',
+    description: 'Análisis exhaustivo de la infraestructura de red para identificar vulnerabilidades.',
+    status: 'pending',
+    progress: 0,
+    startDate: '2024-07-15',
+    endDate: '2024-10-31',
+    teamMembers: ['user-1'],
+    tasksCount: 0,
+    completedTasksCount: 0,
+  },
+  {
+    id: 'proj-8',
+    name: 'Actualización de Documentación Interna',
+    description: 'Revisión y actualización de toda la documentación técnica y de procesos internos.',
+    status: 'completed',
+    progress: 100,
+    startDate: '2024-02-01',
+    endDate: '2024-04-30',
+    teamMembers: ['user-4', 'user-2'],
+    tasksCount: 0,
+    completedTasksCount: 0,
   },
 ];
 
@@ -169,6 +211,73 @@ const initialTasks: Task[] = [
     assignedTo: 'user-2',
     dueDate: '2024-01-25',
     createdAt: '2023-12-01',
+  },
+  // --- TAREAS ADICIONALES PARA LOS NUEVOS PROYECTOS ---
+  {
+    id: 'task-7',
+    projectId: 'proj-5',
+    name: 'Optimizar consultas SQL',
+    description: 'Identificar y mejorar consultas lentas en la base de datos.',
+    status: 'progress',
+    priority: 'high',
+    assignedTo: 'user-3',
+    dueDate: '2024-07-15',
+    createdAt: '2024-05-05',
+  },
+  {
+    id: 'task-8',
+    projectId: 'proj-5',
+    name: 'Limpiar datos históricos',
+    description: 'Archivar o eliminar datos antiguos para mejorar el rendimiento.',
+    status: 'completed',
+    priority: 'medium',
+    assignedTo: 'user-5',
+    dueDate: '2024-06-10',
+    createdAt: '2024-05-20',
+  },
+  {
+    id: 'task-9',
+    projectId: 'proj-6',
+    name: 'Diseño de UI para reportes',
+    description: 'Crear maquetas y diseños para el nuevo módulo de informes.',
+    status: 'pending',
+    priority: 'medium',
+    assignedTo: 'user-4',
+    dueDate: '2024-07-20',
+    createdAt: '2024-05-15',
+  },
+  {
+    id: 'task-10',
+    projectId: 'proj-6',
+    name: 'Implementar lógica de filtrado',
+    description: 'Desarrollar la funcionalidad de filtrado de datos en el frontend del módulo.',
+    status: 'progress',
+    priority: 'high',
+    assignedTo: 'user-3',
+    dueDate: '2024-08-15',
+    createdAt: '2024-06-01',
+  },
+  {
+    id: 'task-11',
+    projectId: 'proj-7',
+    name: 'Escanear puertos de la red',
+    description: 'Realizar un escaneo de puertos para identificar servicios expuestos.',
+    status: 'pending',
+    priority: 'high',
+    assignedTo: 'user-1',
+    dueDate: '2024-08-01',
+    createdAt: '2024-07-16',
+  },
+  {
+    id: 'task-12',
+    projectId: 'proj-8',
+    name: 'Revisar documentación de API',
+    description: 'Actualizar la documentación de todos los endpoints de la API.',
+    status: 'completed',
+    priority: 'medium',
+    assignedTo: 'user-2',
+    dueDate: '2024-03-20',
+    createdAt: '2024-02-10',
   },
 ];
 
