@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
@@ -37,7 +36,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth(); 
-
+ const location = useLocation();
   const isLoginPage = location.pathname === '/login';
 
   const handleCloseMobileMenu = () => {
@@ -46,7 +45,7 @@ function App() {
 
 
   return (
-    <Router>
+ 
       <div className="flex min-h-screen p-4 lg:p-6 bg-gradient-to-br from-blue-300 via-green-300 to-yellow-300">
         <div className={`flex flex-1 rounded-3xl overflow-hidden ${isLoginPage ? '' : 'bg-white shadow-2xl'}`}>
 
@@ -95,7 +94,7 @@ function App() {
           )}
         </div>
       </div>
-    </Router>
+
   );
 }
 
