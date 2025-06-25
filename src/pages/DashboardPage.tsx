@@ -193,9 +193,7 @@ function DashboardPage() {
                     </div>
                   )}
                 </div>
-                <Link to="/tasks" className="block mt-auto pt-4">
-                  <Button variant="secondary" size="sm" fullWidth>Ver todas las tareas</Button>
-                </Link>
+              
               </div>
             )}
        
@@ -228,9 +226,7 @@ function DashboardPage() {
                     </div>
                   )}
                 </div>
-                <Link to="/users" className="block mt-auto pt-4">
-                  <Button variant="secondary" size="sm" fullWidth>Ver todos los usuarios</Button>
-                </Link>
+             
               </div>
             )}
           </div>
