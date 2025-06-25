@@ -12,10 +12,17 @@ function UsersPage() {
   const { users, addUser } = useUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-  const handleAddUser = (newUserData: Omit<User, 'id'>) => {
-    addUser(newUserData);
+  const handleAddUser = (newUserData: Omit<User, 'id' | 'avatarUrl'>) => {
+    const userToCreate = {
+      ...newUserData,
+      avatarUrl: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`
+    };
+    addUser(userToCreate);
     setIsModalOpen(false);
+  };
+
+  const openAddUserModal = () => {
+    setIsModalOpen(true);
   };
 
   const renderRole = (role: User['role']): React.ReactNode => {
@@ -59,9 +66,8 @@ function UsersPage() {
 
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
-
       <div className="mb-6 flex justify-end">
-        <Button iconLeft={<FaPlus />} onClick={() => setIsModalOpen(true)}>
+        <Button iconLeft={<FaPlus />} onClick={openAddUserModal}>
           Nuevo Usuario
         </Button>
       </div>
@@ -76,7 +82,10 @@ function UsersPage() {
         onClose={() => setIsModalOpen(false)}
         title="Añadir Nuevo Usuario"
       >
-        <UserForm onSubmit={handleAddUser} onCancel={() => setIsModalOpen(false)} />
+        <UserForm
+          onSubmit={handleAddUser}
+          onCancel={() => setIsModalOpen(false)}
+        />
       </Modal>
     </div>
   );

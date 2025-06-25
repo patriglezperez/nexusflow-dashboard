@@ -1,25 +1,39 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
 import FormField from '../ui/FormField';
 import Button from '../ui/Button';
-import { User } from '../../utils/data'; 
+import { User } from '../../utils/data';
 
 interface UserFormProps {
-  
-  onSubmit: (userData: Omit<User, 'id'>) => void;
+  initialData?: User;
+  onSubmit: (userData: Omit<User, 'id' | 'avatarUrl'>) => void;
+  onUpdate?: (updatedUser: User) => void;
   onCancel: () => void;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ onSubmit, onCancel }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState<User['role']>('developer'); 
-  const [status, setStatus] = useState<User['status']>('active'); 
-  const [avatarUrl, setAvatarUrl] = useState(`https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`); // Avatar aleatorio
+const UserForm = ({ initialData, onSubmit, onUpdate, onCancel }: UserFormProps) => {
+  const [name, setName] = useState(initialData?.name || '');
+  const [email, setEmail] = useState(initialData?.email || '');
+  const [role, setRole] = useState<User['role']>(initialData?.role || 'developer');
+  const [status, setStatus] = useState<User['status']>(initialData?.status || 'active');
+  const [avatarUrl, setAvatarUrl] = useState(initialData?.avatarUrl || `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`);
 
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name);
+      setEmail(initialData.email);
+      setRole(initialData.role);
+      setStatus(initialData.status);
+      setAvatarUrl(initialData.avatarUrl);
+    } else {
+      setName('');
+      setEmail('');
+      setRole('developer');
+      setStatus('active');
+      setAvatarUrl(`https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`);
+    }
+  }, [initialData]);
 
   const roleOptions = [
     { value: 'admin', label: 'Administrador' },
@@ -40,21 +54,25 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onCancel }) => {
       return;
     }
 
-    
-    onSubmit({
-      name,
-      email,
-      role,
-      avatarUrl, 
-      status,    
-    });
-
-
-    setName('');
-    setEmail('');
-    setRole('developer'); 
-    setStatus('active'); 
-    setAvatarUrl(`https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`); 
+    if (initialData) {
+      if (onUpdate) {
+        onUpdate({
+          ...initialData,
+          name,
+          email,
+          role,
+          status,
+          avatarUrl,
+        });
+      }
+    } else {
+      onSubmit({
+        name,
+        email,
+        role,
+        status,
+      });
+    }
   };
 
   return (
@@ -102,7 +120,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, onCancel }) => {
           Cancelar
         </Button>
         <Button type="submit" variant="primary">
-          Guardar Usuario
+          {initialData ? "Guardar Cambios" : "Añadir Usuario"}
         </Button>
       </div>
     </form>

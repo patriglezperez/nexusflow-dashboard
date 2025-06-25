@@ -1,28 +1,23 @@
-
-
 import React, { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import {
   User,
-  users as initialUsers, 
+  users as initialUsers,
   addUser as addUserToData,
   updateUser as updateUserToData,
   deleteUser as deleteUserFromData,
-  getUserById as getUserByIdFromData 
 } from '../utils/data';
-
+import { v4 as uuidv4 } from 'uuid';
 
 export interface UserContextType {
   users: User[];
   addUser: (userData: Omit<User, 'id'>) => User;
   updateUser: (updatedUser: User) => boolean;
   deleteUser: (id: string) => boolean;
-  getUserById: (id: string) => User | undefined; 
-  refreshUsers: () => void; 
+  getUserById: (id: string) => User | undefined;
+  refreshUsers: () => void;
 }
 
-
 export const UserContext = createContext<UserContextType | undefined>(undefined);
-
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [usersState, setUsersState] = useState<User[]>(initialUsers);
@@ -54,12 +49,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return deleted;
   }, []);
 
-  
   const getUserById = useCallback((id: string) => {
-   
     return usersState.find(u => u.id === id);
-
-  }, [usersState]); 
+  }, [usersState]);
 
   const refreshUsers = useCallback(() => {
     setRefreshKey(prevKey => prevKey + 1);

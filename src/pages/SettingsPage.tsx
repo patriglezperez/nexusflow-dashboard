@@ -1,41 +1,68 @@
 
 import React from 'react';
-import Button from '../components/ui/Button'; 
+import Button from '../components/ui/Button';
+import FormField from '../components/ui/FormField';
+import Input from '../components/ui/Input';
+import Select from '../components/ui/Select';
+import UserForm from '../components/specific/UserForm';
+import { useAuth } from '../contexts/AuthContext';
+import { useUsers } from '../hooks/useUsers';
+import { User } from '../utils/data';
 
 function SettingsPage() {
+  const { user, setCurrentUser } = useAuth(); 
+  const { updateUser } = useUsers();
+
+  const handleUpdateProfile = (updatedUserData: any) => {
+    if (user) {
+      const updatedUserWithId: User = {
+        id: user.id,
+        avatarUrl: user.avatarUrl,
+        ...updatedUserData,
+      };
+
+      const success = updateUser(updatedUserWithId);
+      if (success) {
+        setCurrentUser(updatedUserWithId); 
+        alert('Perfil actualizado exitosamente.');
+      } else {
+        alert('Error al actualizar el perfil.');
+      }
+    }
+  };
+
+  const roleOptions = [
+    { value: 'admin', label: 'Administrador' },
+    { value: 'manager', label: 'Gerente' },
+    { value: 'developer', label: 'Desarrollador' },
+    { value: 'designer', label: 'Diseñador' },
+  ];
+
+  const statusOptions = [
+    { value: 'active', label: 'Activo' },
+    { value: 'inactive', label: 'Inactivo' },
+  ];
+
+  if (!user) {
+    return (
+      <div className="pt-6 pb-6 h-full flex flex-col items-center justify-center text-gray-700">
+        <h2 className="text-2xl font-bold mb-4">Error: Usuario no encontrado</h2>
+        <p>Por favor, inicia sesión para ver y editar tu perfil.</p>
+      </div>
+    );
+  }
+
   return (
-<div className="pt-6 pb-6 h-full flex flex-col"> 
-
-
+    <div className="pt-6 pb-6 h-full flex flex-col">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Perfil de Usuario</h3>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-              <input
-                type="text"
-                id="name"
-                defaultValue="Administrador General"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-150"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-              <input
-                type="email"
-                id="email"
-                defaultValue="admin@nexusflow.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
-                disabled
-              />
-            </div>
-
-            <Button onClick={() => alert('Guardar cambios de perfil')}>
-              Guardar Cambios
-            </Button>
-          </div>
+          <UserForm
+            initialData={user}
+            onUpdate={handleUpdateProfile}
+            onSubmit={() => { alert('Esta acción es solo para actualizar el perfil, no para añadir.'); }}
+            onCancel={() => alert('No se guardaron los cambios del perfil.')}
+          />
         </div>
 
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
