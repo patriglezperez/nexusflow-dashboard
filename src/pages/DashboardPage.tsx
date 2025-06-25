@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 import { useProjects } from '../hooks/useProjects';
 import { useTasks } from '../hooks/useTasks';
 import { useAuth } from '../contexts/AuthContext';
+import { useUsers } from '../hooks/useUsers';
 import Badge from '../components/ui/Badge';
-import { Project, Task } from '../utils/data';
+import Button from '../components/ui/Button';
+import { Project, Task, User } from '../utils/data';
 
 function DashboardPage() {
   const { user } = useAuth();
   const { projects } = useProjects();
   const { tasks } = useTasks();
+  const { users, getUserById } = useUsers();
 
   const activeProjectsCount = projects.filter(p => p.status === 'active' || p.status === 'on-hold' || p.status === 'pending').length;
 
@@ -54,14 +57,42 @@ function DashboardPage() {
     return <span className={`font-semibold ${colorClass}`}>{priority.toUpperCase()}</span>;
   };
 
+  const collaboratingMembers = React.useMemo(() => {
+    if (!user) return [];
+
+    const userActiveProjects = projects.filter(p => p.teamMembers.includes(user.id) && (p.status === 'active' || p.status === 'on-hold' || p.status === 'pending'));
+
+    const memberIds = new Set<string>();
+    userActiveProjects.forEach(p => {
+      p.teamMembers.forEach(memberId => {
+        if (memberId !== user.id) {
+          memberIds.add(memberId);
+        }
+      });
+    });
+
+    return Array.from(memberIds).map(id => getUserById(id)).filter((m): m is User => m !== undefined);
+  }, [projects, user, getUserById]);
+
+  const renderRole = (role: User['role']): React.ReactNode => {
+    let variant: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' = 'secondary';
+    switch (role) {
+      case 'admin': variant = 'primary'; break;
+      case 'manager': variant = 'info'; break;
+      case 'developer': variant = 'success'; break;
+      case 'designer': variant = 'warning'; break;
+    }
+    return <Badge variant={variant} text={role.toUpperCase()} className="ml-2" />;
+  };
+
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
       <h2 className="text-3xl font-bold text-gray-800 mb-8"></h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* Proyectos Activos */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 items-stretch"> 
         <Link to="/projects">
           <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200
-                      transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:border-primary">
+                      transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:border-primary h-full"> 
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Proyectos Activos</h3>
             <p className="text-5xl font-extrabold text-primary mb-4">{activeProjectsCount}</p>
             <div className="pt-4 border-t border-gray-200">
@@ -93,15 +124,14 @@ function DashboardPage() {
           </div>
         </Link>
 
-
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200 flex flex-col 
-                    transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:border-primary">
-          <Link to="/tasks" className="block"> 
+                    transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:border-primary h-full"> 
+          <Link to="/tasks" className="block">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Tareas Pendientes</h3>
             <p className="text-5xl font-extrabold text-warning mb-4">{userPendingTasks.length}</p>
           </Link>
           
-          <div className=" pt-4 border-t border-gray-200 overflow-y-auto max-h-[250px]">
+          <div className="pt-4 border-t border-gray-200 overflow-y-auto max-h-[250px]">
             <p className="text-sm font-medium text-gray-600 mb-3">Mis tareas pendientes:</p>
             {userPendingTasks.length > 0 ? (
               <ul className="space-y-3">
@@ -122,17 +152,43 @@ function DashboardPage() {
                 <p>Tiempo de tomar un café ☕</p>
               </div>
             )}
+           
           </div>
         </div>
 
-        <Link to="/users">
-          <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200
-                      transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:border-primary">
+        <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200 flex flex-col 
+                    transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:border-primary h-full"> 
+          <Link to="/users" className="block">
             <h3 className="text-lg font-semibold text-gray-700 mb-2">Miembros del Equipo</h3>
-            <p className="text-5xl font-extrabold text-success">{teamMembersCount}</p>
+            <p className="text-5xl font-extrabold text-success mb-4">{collaboratingMembers.length}</p>
+          </Link>
+
+          <div className="pt-4 border-t border-gray-200 overflow-y-auto max-h-[250px]">
+            <p className="text-sm font-medium text-gray-600 mb-3">Colaboradores actuales:</p>
+            {collaboratingMembers.length > 0 ? (
+              <ul className="space-y-2">
+    
+                {collaboratingMembers.slice(0, 3).map((member: User) => (
+                  <li key={member.id} className="flex items-center text-gray-700 py-1">
+                    <img src={member.avatarUrl} alt={member.name} className="w-8 h-8 rounded-full mr-3 border border-gray-300" />
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <span className="font-medium truncate">{member.name}</span>
+                      <span className="text-xs text-gray-500 truncate">{member.email}</span>
+                    </div>
+                    {renderRole(member.role)}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-center py-4 text-gray-500 text-sm">
+                <p>No colaboras en proyectos activos.</p>
+              </div>
+            )}
           </div>
-        </Link>
+        
+        </div>
       </div>
+
 
       <div className="bg-white-ish p-6 rounded-2xl shadow-lg border border-gray-200 flex-1 mt-6">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">Actividad Reciente</h3>
