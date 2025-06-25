@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -16,7 +15,8 @@ import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import TaskForm from '../components/specific/TaskForm';
-import { FaArrowLeft, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import ProjectForm from '../components/specific/ProjectForm';
+import { FaArrowLeft, FaPlus, FaTrashAlt, FaEdit } from 'react-icons/fa';
 
 function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>(); 
@@ -25,7 +25,7 @@ function ProjectDetailPage() {
   const { users, getUserById: getUserByIdFromContext } = useUsers(); 
   const { tasks, addTask } = useTasks();
 
-  const { projects, deleteProject, refreshProjects } = useProjects();
+  const { projects, deleteProject, updateProject, refreshProjects } = useProjects();
 
 
   useEffect(() => {
@@ -43,6 +43,7 @@ function ProjectDetailPage() {
   const projectTasks = tasks.filter(task => task.projectId === id);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleAddTask = (newTaskData: Omit<Task, 'id' | 'createdAt'>) => {
     if (project) {
@@ -62,6 +63,16 @@ function ProjectDetailPage() {
       } else {
         alert('Error: No se pudo eliminar el proyecto.');
       }
+    }
+  };
+  
+  const handleUpdateProject = (updatedProject: Project) => {
+    const success = updateProject(updatedProject);
+    if (success) {
+      alert('Información del proyecto actualizada exitosamente.');
+      setIsEditModalOpen(false);
+    } else {
+      alert('Error: No se pudo actualizar la información del proyecto.');
     }
   };
 
@@ -107,25 +118,34 @@ function ProjectDetailPage() {
     },
     { header: 'Asignado a', accessor: (row: Task) => getAssigneeName(row.assignedTo), className: 'text-gray-700 max-w-[150px] truncate' },
     { header: 'Fecha Límite', accessor: (row: Task) => row.dueDate, className: 'text-gray-600 w-28' },
-  ], [projectTasks, users]); // Dependencias para memoizar la tabla
+  ], [projectTasks, users]);
 
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
+      {/* --- INICIO: Encabezado con los botones arriba --- */}
       <div className="flex items-center mb-6 justify-between">
-        <div className="flex items-center">
-          <Button variant="ghost" onClick={() => navigate('/projects')} iconLeft={<FaArrowLeft />} className="mr-4">
-            <span className="text-lg">Volver</span>
-          </Button>
-          <h2 className="text-3xl font-bold text-gray-800">{project.name}</h2>
-        </div>
-        <Button
-          variant="danger"
-          onClick={handleDeleteProject}
-          iconLeft={<FaTrashAlt />}
-        >
-          Eliminar Proyecto
+        <Button variant="ghost" onClick={() => navigate('/projects')} iconLeft={<FaArrowLeft />} className="mr-4">
+          <span className="text-lg">Volver</span>
         </Button>
+        <div className="flex space-x-3">
+          <Button
+            variant="secondary"
+            onClick={() => setIsEditModalOpen(true)}
+            iconLeft={<FaEdit />}
+          >
+            Editar Proyecto
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleDeleteProject}
+            iconLeft={<FaTrashAlt />}
+          >
+            Eliminar Proyecto
+          </Button>
+        </div>
       </div>
+  
+      <h2 className="text-3xl font-bold text-gray-800 mb-8">{project.name}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="md:col-span-2 bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
@@ -197,6 +217,19 @@ function ProjectDetailPage() {
         title={`Añadir Tarea a "${project.name}"`}
       >
         <TaskForm onSubmit={handleAddTask} onCancel={() => setIsModalOpen(false)} initialProjectId={project.id} />
+      </Modal>
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title={`Editar Proyecto: ${project.name}`}
+      >
+        <ProjectForm
+          initialData={project}
+          onUpdate={handleUpdateProject}
+          onSubmit={() => {}}
+          onCancel={() => setIsEditModalOpen(false)}
+        />
       </Modal>
     </div>
   );

@@ -1,23 +1,45 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../ui/Input';
 import Select from '../ui/Select'; 
 import FormField from '../ui/FormField';
 import Button from '../ui/Button';
-import { NewProjectData, users as allUsersData } from '../../utils/data'; 
+import { NewProjectData, users as allUsersData, Project } from '../../utils/data'; 
 
 interface ProjectFormProps {
-  onSubmit: (newProjectData: NewProjectData) => void;
+  initialData?: Project; 
+  onSubmit?: (newProjectData: NewProjectData) => void; 
+  onUpdate?: (updatedProject: Project) => void; 
   onCancel: () => void;
 }
 
-const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, onCancel }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [status, setStatus] = useState<NewProjectData['status']>('active');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [teamMembers, setTeamMembers] = useState<string[]>([]);
+const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSubmit, onUpdate, onCancel }) => {
+
+  const [name, setName] = useState(initialData?.name || '');
+  const [description, setDescription] = useState(initialData?.description || '');
+  const [status, setStatus] = useState<Project['status']>(initialData?.status || 'active');
+  const [startDate, setStartDate] = useState(initialData?.startDate || '');
+  const [endDate, setEndDate] = useState(initialData?.endDate || '');
+  const [teamMembers, setTeamMembers] = useState<string[]>(initialData?.teamMembers || []);
+
+  
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name);
+      setDescription(initialData.description);
+      setStatus(initialData.status);
+      setStartDate(initialData.startDate);
+      setEndDate(initialData.endDate);
+      setTeamMembers(initialData.teamMembers);
+    } else {
+   
+      setName('');
+      setDescription('');
+      setStatus('active');
+      setStartDate('');
+      setEndDate('');
+      setTeamMembers([]);
+    }
+  }, [initialData]);
 
   const statusOptions = [
     { value: 'active', label: 'Activo' },
@@ -26,11 +48,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, onCancel }) => {
     { value: 'pending', label: 'Pendiente' },
   ];
 
-
   const teamMemberOptions = allUsersData.map(user => ({ value: user.id, label: user.name }));
 
   const handleMembersChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-
     const selectedOptions = Array.from(e.target.selectedOptions).map(option => option.value);
     setTeamMembers(selectedOptions);
   };
@@ -43,23 +63,31 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, onCancel }) => {
     }
 
 
-    const newProjectData: NewProjectData = {
-      name,
-      description,
-      status,
-      startDate,
-      endDate,
-      teamMembers, 
-    };
+    if (initialData) {
 
-    onSubmit(newProjectData);
+      const updatedProject: Project = {
+        ...initialData, 
+        name,
+        description,
+        status,
+        startDate,
+        endDate,
+        teamMembers,
 
-    setName('');
-    setDescription('');
-    setStatus('active');
-    setStartDate('');
-    setEndDate('');
-    setTeamMembers([]);
+      };
+      if (onUpdate) onUpdate(updatedProject);
+    } else {
+
+      const newProjectData: NewProjectData = {
+        name,
+        description,
+        status,
+        startDate,
+        endDate,
+        teamMembers,
+      };
+      if (onSubmit) onSubmit(newProjectData);
+    }
   };
 
   return (
@@ -141,7 +169,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ onSubmit, onCancel }) => {
           Cancelar
         </Button>
         <Button type="submit" variant="primary">
-          Añadir Proyecto
+          {initialData ? 'Guardar Cambios' : 'Añadir Proyecto'}
         </Button>
       </div>
     </form>
