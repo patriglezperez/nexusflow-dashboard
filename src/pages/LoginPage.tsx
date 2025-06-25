@@ -66,7 +66,7 @@ function LoginPage() {
         </form>
       
         <p className="text-center text-gray-600 text-sm mt-6">
-          ¿Olvidaste tu contraseña? <a href="#" className="text-primary hover:underline">Recuperar</a>
+          <a href="#" className="text-primary hover:underline">¿Olvidaste tu contraseña?</a>
         </p>
       </div>
     </div>
