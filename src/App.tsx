@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
@@ -38,11 +38,13 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth(); 
 
+  const isLoginPage = location.pathname === '/login';
+
   const handleCloseMobileMenu = () => {
     setMobileMenuOpen(false);
   };
 
-  if (!isAuthenticated && !isLoading && window.location.pathname !== '/login') {
+  if (!isAuthenticated && !isLoading && !isLoginPage) {
     return (
       <Router>
         <Routes>
@@ -55,8 +57,9 @@ function App() {
 
   return (
     <Router>
-      <div className="flex min-h-screen bg-light p-4 lg:p-6">
-        <div className="flex flex-1 rounded-3xl shadow-2xl overflow-hidden bg-white">
+      <div className="flex min-h-screen p-4 lg:p-6 bg-gradient-to-br from-blue-300 via-green-300 to-yellow-300">
+      
+        <div className={`flex flex-1 rounded-3xl overflow-hidden ${isLoginPage ? '' : 'bg-white shadow-2xl'}`}>
 
           {isAuthenticated && (
             <Sidebar
@@ -66,7 +69,7 @@ function App() {
             />
           )}
 
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 flex flex-col min-w-0"> 
             {isAuthenticated && (
               <Navbar onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
             )}
@@ -82,7 +85,6 @@ function App() {
                 <Route path="/users" element={<PrivateRoute><UsersPage /></PrivateRoute>} />
                 <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 
-      
                 <Route path="*" element={isAuthenticated ? (
                   <div className="p-8 text-center text-gray-700 h-full flex flex-col justify-center items-center">
                     <h2 className="text-3xl font-bold mb-4">404 - Página no encontrada</h2>

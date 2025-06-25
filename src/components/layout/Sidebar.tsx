@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { FaTimes, FaSignOutAlt } from 'react-icons/fa'; 
 import { useAuth } from '../../contexts/AuthContext'; 
 import { useNavigate } from 'react-router-dom'; 
+import nexusflowLogo from '../../assets/images/nexusflow_logo.png'; 
 
 interface SidebarProps {
   isOpen: boolean;
@@ -54,7 +55,12 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
         )}
 
         <div className="text-3xl font-extrabold mb-10 text-white tracking-wide">
-          NexusFlow</div>
+          <img
+            src={nexusflowLogo}
+            alt="NexusFlow Logo"
+            className="w-12 h-12 object-contain"
+          />
+        </div>
         <nav className="flex-1">
           <ul>
             {navItems.map((item) => (
