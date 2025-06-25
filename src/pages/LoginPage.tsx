@@ -51,7 +51,7 @@ function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. johndoe@gmail.com"
+              placeholder="patricia@gmail.com"
               required
             />
           </FormField>
@@ -61,7 +61,7 @@ function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter Password"
+              placeholder="******"
               required
             />
           </FormField>
