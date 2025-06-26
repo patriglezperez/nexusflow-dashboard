@@ -41,9 +41,9 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
       )}
 
       <aside
-        className={`w-64 bg-dark text-white-ish p-6 flex-col rounded-l-3xl ${className || ''}
+        className={`w-64 bg-dark text-white-ish p-6 flex-col rounded-l-3xl  ${className || ''}
                    ${className?.includes('md:hidden')
-                     ? `fixed top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`
+                     ? `absolute top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out  ${isOpen ? 'translate-x-0 ' : '-translate-x-full '}`
                      : ''}`}
       >
         {className?.includes('md:hidden') && (

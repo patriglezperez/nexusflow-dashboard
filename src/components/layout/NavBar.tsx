@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { FaBars } from 'react-icons/fa';
-import Button from '../ui/Button'; 
 import { useAuth } from '../../contexts/AuthContext'; 
 
 interface NavbarProps {
