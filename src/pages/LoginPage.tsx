@@ -4,14 +4,17 @@ import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import FormField from '../components/ui/FormField';
 import { useAuth } from '../contexts/AuthContext';
+import Modal from '../components/ui/Modal'; 
 
-import nexusflowLogo from '../assets/images/nexusflow_logo.png'; 
+import nexusflowLogo from '../assets/images/nexusflow_logo.png';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login, isLoading, error } = useAuth();
   const navigate = useNavigate();
+
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,11 +79,47 @@ function LoginPage() {
           </Button>
         </form>
         <p className="text-center text-gray-600 text-sm mt-6">
-          <a href="#" className="text-primary hover:underline">¿Has olvidado tu contraseña?</a>
+          <a href="#" className="text-primary hover:underline" onClick={() => setIsContactModalOpen(true)}>Obtén tu clave de acceso</a>
         </p>
       </div>
+
+
+      <Modal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      >
+        <br/>
+        <div className="flex flex-col items-center text-center">
+  
+          <div className="wrapper mb-6">
+            <div className="circle"></div>
+            <div className="circle"></div>
+            <div className="circle"></div>
+            <div className="shadow"></div>
+            <div className="shadow"></div>
+            <div className="shadow"></div>
+          </div>
+
+          <p className="text-lg text-gray-800 mb-4 font-semibold">
+            ¡Descubre NexusFlow!
+          </p>
+          <p className="text-gray-600 mb-6">
+            Para explorar todas las funcionalidades de NexusFlow, ponte en contacto conmigo. Te proporcionaré tus claves de acceso para que puedas descubrir cómo funciona la aplicación
+          </p>
+          <p className="text-primary text-lg font-bold mb-4">
+            <a href="mailto:patriglzperez@gmail.com" >patriglzperez@gmail.com</a>
+          </p>
+          <br/>
+          <Button variant="secondary" onClick={() => setIsContactModalOpen(false)}>
+            Entendido
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
 
 export default LoginPage;
+
+
+  
