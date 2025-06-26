@@ -1,9 +1,15 @@
-import React from 'react';
+
 import { NavLink } from 'react-router-dom';
-import { FaTimes, FaSignOutAlt } from 'react-icons/fa'; 
+import { FaTimes } from 'react-icons/fa'; 
 import { useAuth } from '../../contexts/AuthContext'; 
 import { useNavigate } from 'react-router-dom'; 
 import nexusflowLogo from '../../assets/images/nexusflow_logo.png'; 
+import { MdDashboardCustomize } from "react-icons/md";
+import { FaProjectDiagram } from "react-icons/fa";
+import { FaTasks } from "react-icons/fa";
+import { FaUserFriends } from "react-icons/fa";
+import { IoIosSettings } from "react-icons/io";
+import { IoExit } from "react-icons/io5";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -16,11 +22,11 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
   const navigate = useNavigate(); 
 
   const navItems = [
-    { name: 'Dashboard', icon: '📊', path: '/' },
-    { name: 'Proyectos', icon: '🚀', path: '/projects' },
-    { name: 'Tareas', icon: '✅', path: '/tasks' },
-    { name: 'Usuarios', icon: '👥', path: '/users' },
-    { name: 'Configuración', icon: '⚙️', path: '/settings' },
+    { name: 'Dashboard', icon:<MdDashboardCustomize />, path: '/' },
+    { name: 'Proyectos', icon: <FaProjectDiagram /> , path: '/projects' },
+    { name: 'Tareas', icon: <FaTasks /> , path: '/tasks' },
+    { name: 'Usuarios', icon: <FaUserFriends /> , path: '/users' },
+    { name: 'Configuración', icon: <IoIosSettings /> , path: '/settings' },
   ];
 
   const backdropClasses = `
@@ -41,9 +47,9 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
       )}
 
       <aside
-        className={`w-64 bg-dark text-white-ish p-6 flex-col rounded-l-3xl ${className || ''}
+        className={`w-64 bg-dark text-white-ish p-6 flex-col rounded-l-3xl  ${className || ''}
                    ${className?.includes('md:hidden')
-                     ? `fixed top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`
+                     ? `absolute top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out  ${isOpen ? 'translate-x-0 ' : '-translate-x-full '}`
                      : ''}`}
       >
         {className?.includes('md:hidden') && (
@@ -60,6 +66,7 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
             alt="NexusFlow Logo"
             className="w-12 h-12 object-contain"
           />
+          <p className='ml-2 mt-2'>nexusFlow</p>
         </div>
         <nav className="flex-1">
           <ul>
@@ -87,7 +94,7 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
             className="w-full text-left p-3 rounded-lg hover:bg-gray-700 text-gray-300 transition-colors duration-200 flex items-center"
             onClick={handleLogout}
           >
-            <FaSignOutAlt className="mr-3" /> Cerrar Sesión
+            <IoExit className="mr-3" /> Cerrar Sesión
           </button>
         </div>
       </aside>

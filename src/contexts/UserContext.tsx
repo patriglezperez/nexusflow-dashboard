@@ -1,4 +1,11 @@
-import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+  useContext,
+} from 'react';
 import {
   User,
   users as initialUsers,
@@ -16,7 +23,7 @@ export interface UserContextType {
   refreshUsers: () => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [usersState, setUsersState] = useState<User[]>(initialUsers);
@@ -61,7 +68,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     addUser: handleAddUser,
     updateUser: handleUpdateUser,
     deleteUser: handleDeleteUser,
-    getUserById: getUserById,
+    getUserById,
     refreshUsers,
   };
 
@@ -71,3 +78,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     </UserContext.Provider>
   );
 };
+
+
+export const useUserContext = (): UserContextType => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUserContext must be used within a UserProvider');
+  }
+  return context;
+};
+
+
+export { UserContext };

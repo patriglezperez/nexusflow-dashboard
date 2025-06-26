@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { FaBars } from 'react-icons/fa';
-import Button from '../ui/Button'; 
 import { useAuth } from '../../contexts/AuthContext'; 
 
 interface NavbarProps {
@@ -16,11 +15,11 @@ function Navbar({ onMenuToggle }: NavbarProps) {
   let pageTitle = "Dashboard";
 
   switch (location.pathname) {
-    case '/': pageTitle = 'Dashboard'; break;
-    case '/projects': pageTitle = 'Proyectos'; break;
-    case '/tasks': pageTitle = 'Tareas'; break;
+    case '/': pageTitle = ''; break;
+    case '/projects': pageTitle = ''; break;
+    case '/tasks': pageTitle = ''; break;
     case '/users': pageTitle = 'Usuarios'; break;
-    case '/settings': pageTitle = 'Configuración'; break;
+    case '/settings': pageTitle = ''; break;
     default:
       if (location.pathname.startsWith('/projects/')) {
         pageTitle = 'Detalle del Proyecto';
@@ -43,10 +42,8 @@ function Navbar({ onMenuToggle }: NavbarProps) {
 
       <h1 className="text-3xl font-bold text-gray-800 ml-4 md:ml-0">{pageTitle}</h1>
 
-      <div className="flex items-center space-x-4">
-        {user && (
-          <span className="text-gray-700 text-lg font-medium hidden sm:inline">Hola, {user.name}!</span>
-        )}
+      <div className="flex flex-row items-center space-x-4">
+       
         <img
           src={user?.avatarUrl || "https://api.dicebear.com/7.x/initials/svg?seed=AD&backgroundColor=4F46E5&fontColor=FFFFFF"} // Usar avatar del usuario logueado
           alt="Avatar"
