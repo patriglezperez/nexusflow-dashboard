@@ -7,6 +7,7 @@ import { useUsers } from '../hooks/useUsers';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import { Project, Task, User } from '../utils/data';
+import { IoSettingsOutline } from "react-icons/io5";
 
 const DASHBOARD_PREFS_KEY = 'dashboard_preferences';
 
@@ -185,10 +186,9 @@ function DashboardPage() {
       
       {allCardsHidden ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-600 p-8 rounded-xl bg-white-ish border border-gray-200">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.a1.724 1.724 0 002.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
+     
+          <IoSettingsOutline className="text-5xl mr-4 md:mr-0"/>
+          <br/>
           <p className="text-xl font-semibold mb-2">¡Tu dashboard está vacío!</p>
           <p className="mb-4">Parece que todas las secciones del dashboard están ocultas.</p>
           <Link to="/settings">

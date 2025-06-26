@@ -78,9 +78,11 @@ function SettingsPage() {
 
         <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200">
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Personaliza tu Dashboard</h3>
+          <p className=" text-gray-700">Activa o desactiva los componentes para personalizar lo que ves en tu Dashboard.</p>
+          <br/><br/>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Mostrar "Proyectos Activos"</span>
+              <span className="text-gray-700">Proyectos Activos</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -93,7 +95,7 @@ function SettingsPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Mostrar "Tareas Pendientes"</span>
+              <span className="text-gray-700">Tareas Pendientes</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -106,7 +108,7 @@ function SettingsPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Mostrar "Miembros del Equipo"</span>
+              <span className="text-gray-700">Miembros del Equipo</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -119,7 +121,7 @@ function SettingsPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">Mostrar "Actividad Reciente"</span>
+              <span className="text-gray-700">Actividad Reciente</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
