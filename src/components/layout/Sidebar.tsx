@@ -66,6 +66,7 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
             alt="NexusFlow Logo"
             className="w-12 h-12 object-contain"
           />
+          <p className='ml-2 mt-2'>nexusFlow</p>
         </div>
         <nav className="flex-1">
           <ul>
