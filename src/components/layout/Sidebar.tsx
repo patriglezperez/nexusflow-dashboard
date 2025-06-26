@@ -60,13 +60,13 @@ function Sidebar({ isOpen, onClose, className }: SidebarProps) {
           </div>
         )}
 
-        <div className="text-3xl font-extrabold mb-10 text-white tracking-wide">
+        <div className="text-3xl font-extrabold mb-10 text-white tracking-wide flex">
           <img
             src={nexusflowLogo}
             alt="NexusFlow Logo"
             className="w-12 h-12 object-contain"
           />
-          <p className='ml-2 mt-2'>nexusFlow</p>
+          <p className='ml-2 mt-4 text-sm'>nexusFlow</p>
         </div>
         <nav className="flex-1">
           <ul>
