@@ -11,6 +11,7 @@ export interface Project {
   teamMembers: string[]; 
   tasksCount: number;
   completedTasksCount: number; 
+  updatedAt?: string; 
 }
 
 export interface Task {
@@ -23,6 +24,7 @@ export interface Task {
   assignedTo: string;
   dueDate: string; 
   createdAt: string; 
+  updatedAt?: string; 
 }
 
 export interface User {
@@ -39,10 +41,10 @@ export type NewTaskData = Omit<Task, 'id' | 'createdAt'>;
 
 const initialUsers: User[] = [
   { id: 'user-1', name: 'Juan Pérez', email: 'juan@example.com', role: 'admin', avatarUrl: 'https://i.pravatar.cc/150?img=1', status: 'active' },
-  { id: 'user-2', name: 'María López', email: 'maria@example.com', role: 'manager', avatarUrl: 'https://i.pravatar.cc/150?img=2', status: 'active' },
-  { id: 'user-3', name: 'Carlos García', email: 'carlos@example.com', role: 'developer', avatarUrl: 'https://i.pravatar.cc/150?img=3', status: 'active' },
+  { id: 'user-2', name: 'María López', email: 'maria@example.com', role: 'manager', avatarUrl: 'https://i.pravatar.cc/150?img=32', status: 'active' },
+  { id: 'user-3', name: 'Carlos García', email: 'carlos@example.com', role: 'developer', avatarUrl: 'https://i.pravatar.cc/150?img=58', status: 'active' },
   { id: 'user-4', name: 'Ana Fernández', email: 'ana@example.com', role: 'designer', avatarUrl: 'https://i.pravatar.cc/150?img=4', status: 'active' },
-  { id: 'user-5', name: 'Luis Martínez', email: 'luis@example.com', role: 'developer', avatarUrl: 'https://i.pravatar.cc/150?img=5', status: 'active' },
+  { id: 'user-5', name: 'Luis Martínez', email: 'luis@example.com', role: 'developer', avatarUrl: 'https://i.pravatar.cc/150?img=27', status: 'active' },
 ];
 
 const initialProjects: Project[] = [
@@ -167,6 +169,7 @@ const initialTasks: Task[] = [
     assignedTo: 'user-3', 
     dueDate: '2024-06-15',
     createdAt: '2024-03-10',
+    
   },
   {
     id: 'task-3',
@@ -339,11 +342,15 @@ export const addProject = (data: NewProjectData): Project => {
 
 export const updateProject = (updatedProject: Project): boolean => {
     const index = projects.findIndex(p => p.id === updatedProject.id);
+    
     if (index !== -1) {
+        updatedProject.updatedAt = new Date().toISOString();
+
         projects[index] = updatedProject;
         saveData('projects', projects);
         return true;
     }
+
     return false;
 };
 
@@ -375,14 +382,15 @@ export const addTask = (data: NewTaskData): Task => {
 };
 
 export const updateTask = (updatedTask: Task): boolean => {
-    const index = tasks.findIndex(t => t.id === updatedTask.id);
-    if (index !== -1) {
-        tasks[index] = updatedTask;
-        saveData('tasks', tasks);
-        recalculateProjectStats(updatedTask.projectId); 
-        return true;
-    }
-    return false;
+  const index = tasks.findIndex(t => t.id === updatedTask.id);
+  if (index !== -1) {
+    updatedTask.updatedAt = new Date().toISOString().slice(0, 10); 
+    tasks[index] = updatedTask;
+    saveData('tasks', tasks);
+    recalculateProjectStats(updatedTask.projectId);
+    return true;
+  }
+  return false;
 };
 
 export const deleteTask = (id: string): boolean => {

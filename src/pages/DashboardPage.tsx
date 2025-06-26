@@ -11,7 +11,7 @@ import { Project, Task, User } from '../utils/data';
 const DASHBOARD_PREFS_KEY = 'dashboard_preferences';
 
 function DashboardPage() {
-  const { user } = useAuth();
+  const { user } = useAuth(); 
   const { projects } = useProjects();
   const { tasks } = useTasks();
   const { users, getUserById } = useUsers();
@@ -101,14 +101,88 @@ function DashboardPage() {
     return <Badge variant={variant} text={role.toUpperCase()} className="ml-2" />;
   };
 
- 
+  // Lógica para Actividad Reciente
+  const recentActivities = React.useMemo(() => {
+    const activities: { date: Date; message: React.ReactNode; icon: React.ReactNode; iconColor: string }[] = [];
+
+    const timeAgo = (date: Date) => {
+        const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + " años";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + " meses";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + " días";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + " horas";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + " min";
+        return Math.floor(seconds) + " seg";
+    };
+
+    tasks.forEach(task => {
+      const assignee = getUserById(task.assignedTo);
+      const projectName = projects.find(p => p.id === task.projectId)?.name || 'Proyecto Desconocido';
+
+      activities.push({
+        date: new Date(task.createdAt),
+        message: (
+          <>
+            <span className="font-semibold">{assignee?.name || 'Usuario desconocido'}</span> ha creado la tarea "<Link to={`/projects/${task.projectId}`} className="text-primary hover:underline">{task.name}</Link>" en el proyecto "{projectName}".
+          </>
+        ),
+        icon: '📝',
+        iconColor: 'text-info',
+      });
+
+      if (task.status === 'completed') {
+        activities.push({
+          date : new Date(task.updatedAt ?? task.createdAt),
+          message: (
+            <>
+              <span className="font-semibold">{assignee?.name || 'Usuario desconocido'}</span> completó la tarea "<Link to={`/projects/${task.projectId}`} className="text-primary hover:underline">{task.name}</Link>".
+            </>
+          ),
+          icon: '✅',
+          iconColor: 'text-success',
+        });
+      }
+    });
+
+    projects.forEach(project => {
+        activities.push({
+            date : new Date(project.updatedAt ?? project.startDate),
+            message: (
+                <>
+                    El proyecto "<Link to={`/projects/${project.id}`} className="text-primary hover:underline">{project.name}</Link>" ha sido actualizado.
+                </>
+            ),
+            icon: '🚀',
+            iconColor: 'text-primary',
+        });
+    });
+
+    activities.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    return activities.slice(0, 7);
+  }, [tasks, projects, getUserById]);
+
+
   const allCardsHidden = !dashboardPrefs.showProjects && !dashboardPrefs.showTasks && !dashboardPrefs.showMembers && !dashboardPrefs.showRecentActivity;
 
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8"></h2>
+ 
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4 tracking-tight">
+          Hola, {user?.name} 👋
+        </h1>
+        <p className="text text-gray-600">
+          Una solución integral para gestionar tus proyectos y tareas en equipo,<br/>
+          optimizando tiempos, responsabilidades y resultados.
+        </p>
+      </div>
       
-
       {allCardsHidden ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-600 p-8 rounded-xl bg-white-ish border border-gray-200">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -125,7 +199,6 @@ function DashboardPage() {
         </div>
       ) : (
         <>
-    
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 items-stretch">
             {dashboardPrefs.showProjects && (
               <Link to="/projects">
@@ -226,7 +299,7 @@ function DashboardPage() {
                     </div>
                   )}
                 </div>
-             
+              
               </div>
             )}
           </div>
