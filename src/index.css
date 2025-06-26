@@ -1,3 +1,5 @@
+@import 'react-calendar/dist/Calendar.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -123,4 +125,47 @@ body {
   left: auto;
   right: 15%;
   animation-delay: .3s;
+}
+
+
+/* Custom styles for react-calendar using Tailwind JIT */
+@layer components {
+    /* Style for the day tile that has a project */
+    .project-day-tailwind {
+        background-color: theme('colors.indigo.500') !important;
+        color: theme('colors.white') !important;
+        font-weight: theme('fontWeight.bold');
+        border-radius: 9999px; /* rounded-full */
+        position: relative;
+        overflow: visible;
+        box-shadow: theme('boxShadow.md');
+    }
+
+    /* FIX: Hide the default day number (abbr) when the tile has our custom class */
+    .project-day-tailwind abbr {
+        display: none;
+    }
+
+    .project-day-tailwind:hover {
+        background-color: theme('colors.indigo.600') !important;
+        cursor: pointer;
+    }
+
+    /* Override react-calendar's tile default styling */
+    .react-calendar__tile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: theme('spacing.2'); /* p-2 */
+        border-radius: 9999px; /* rounded-full */
+        transition-property: background-color, border-radius;
+        transition-duration: 200ms;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        aspect-ratio: 1 / 1;
+    }
+
+    /* Style for the current day */
+    .react-calendar__tile--now {
+        background-color: theme('colors.gray.300') !important;
+    }
 }
