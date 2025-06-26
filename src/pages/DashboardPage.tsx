@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useProjects } from '../hooks/useProjects';
 import { useTasks } from '../hooks/useTasks';
@@ -8,11 +8,13 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import { Project, Task, User } from '../utils/data';
 import { IoSettingsOutline } from "react-icons/io5";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const DASHBOARD_PREFS_KEY = 'dashboard_preferences';
 
 function DashboardPage() {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const { projects } = useProjects();
   const { tasks } = useTasks();
   const { users, getUserById } = useUsers();
@@ -22,7 +24,10 @@ function DashboardPage() {
     showTasks: true,
     showMembers: true,
     showRecentActivity: true,
+    showCalendar: true,
   });
+
+  const [calendarDate, setCalendarDate] = useState<Date | null>(new Date());
 
   useEffect(() => {
     try {
@@ -57,7 +62,7 @@ function DashboardPage() {
 
   const userPendingTasks = tasks.filter(task =>
     task.assignedTo === user?.id && (task.status === 'pending' || task.status === 'progress' || task.status === 'blocked')
-  ).sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  ).sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
   const renderTaskStatus = (status: Task['status']): React.ReactNode => {
     let variant: 'info' | 'success' | 'warning' | 'danger' | 'secondary' = 'secondary';
@@ -102,7 +107,6 @@ function DashboardPage() {
     return <Badge variant={variant} text={role.toUpperCase()} className="ml-2" />;
   };
 
-  // Lógica para Actividad Reciente
   const recentActivities = React.useMemo(() => {
     const activities: { date: Date; message: React.ReactNode; icon: React.ReactNode; iconColor: string }[] = [];
 
@@ -167,10 +171,74 @@ function DashboardPage() {
 
     return activities.slice(0, 7);
   }, [tasks, projects, getUserById]);
+  
+  const projectDates = useMemo(() => {
+    const dates = new Set();
+    projects.forEach(project => {
+      if (project.startDate) {
+        dates.add(new Date(project.startDate).toDateString());
+      }
+      if (project.endDate) {
+        dates.add(new Date(project.endDate).toDateString());
+      }
+    });
+    return dates;
+  }, [projects]);
 
+  const tileClassName = ({ date, view }: { date: Date; view: string }) => {
+    if (view === 'month' && projectDates.has(date.toDateString())) {
+      return 'project-day-tailwind';
+    }
+    return null;
+  };
 
-  const allCardsHidden = !dashboardPrefs.showProjects && !dashboardPrefs.showTasks && !dashboardPrefs.showMembers && !dashboardPrefs.showRecentActivity;
+  // MODIFIED: tileContent to make it clickable
+  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+    if (view === 'month') {
+      const projectsOnDay = projects.filter(project =>
+        new Date(project.startDate).toDateString() === date.toDateString() ||
+        new Date(project.endDate).toDateString() === date.toDateString()
+      );
+      
+      if (projectsOnDay.length > 0) {
+        // Get the first project's ID to navigate to its details page
+        const firstProjectId = projectsOnDay[0].id;
 
+        return (
+          // Link wraps the tile content and makes the whole area clickable
+          <Link 
+            to={`/projects/${firstProjectId}`} 
+            className="absolute inset-0 flex items-center justify-center p-1"
+            title={`Ver ${projectsOnDay.length} proyecto(s) en este día`}
+          >
+            {/* The abbr element for the day number is hidden by default in your custom CSS.
+                We need to ensure it's visible, or render it here. */}
+            <span className="text-gray-900 font-bold text-sm z-10">{date.getDate()}</span>
+            
+            {/* This is the red circle with the count */}
+            <span className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-danger text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center pointer-events-none shadow-md">
+              {projectsOnDay.length}
+            </span>
+          </Link>
+        );
+      }
+    }
+    // Return null if no project is found for the day, so the default number shows.
+    return null;
+  };
+  
+  const handleCalendarChange = (value: any) => {
+    if (value instanceof Date) {
+      setCalendarDate(value);
+    } else if (Array.isArray(value) && value.length > 0) {
+      setCalendarDate(value[0]);
+    } else {
+        setCalendarDate(null);
+    }
+  };
+  
+  const allCardsHidden = !dashboardPrefs.showProjects && !dashboardPrefs.showTasks && !dashboardPrefs.showMembers && !dashboardPrefs.showRecentActivity && !dashboardPrefs.showCalendar;
+  
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
  
@@ -331,6 +399,22 @@ function DashboardPage() {
               </ul>
             </div>
           )}
+           {dashboardPrefs.showCalendar && (
+                <div className="bg-white-ish p-6 rounded-xl shadow-md border border-gray-200 flex flex-col
+                               mt-6 w-full lg:w-1/2 mx-auto">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Calendario de Proyectos</h3>
+                    <div className="flex-grow flex items-center justify-center">
+                        <Calendar
+                            onChange={handleCalendarChange}
+                            value={calendarDate}
+                            locale="es-ES"
+                            tileClassName={tileClassName}
+                            tileContent={tileContent}
+                            className="w-full max-w-full border-none rounded-xl font-sans"
+                        />
+                    </div>
+                </div>
+            )}
         </>
       )}
     </div>

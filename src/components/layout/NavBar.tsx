@@ -18,7 +18,7 @@ function Navbar({ onMenuToggle }: NavbarProps) {
     case '/': pageTitle = ''; break;
     case '/projects': pageTitle = ''; break;
     case '/tasks': pageTitle = ''; break;
-    case '/users': pageTitle = 'Usuarios'; break;
+    case '/users': pageTitle = ''; break;
     case '/settings': pageTitle = ''; break;
     default:
       if (location.pathname.startsWith('/projects/')) {

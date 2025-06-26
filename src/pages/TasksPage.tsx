@@ -150,8 +150,8 @@ function TasksPage() {
 
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
-      <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">Todas las Tareas</h2>
+      <div className="mb-6 flex justify-end">
+  
         <div className="flex space-x-3">
           <Button
             variant="secondary"

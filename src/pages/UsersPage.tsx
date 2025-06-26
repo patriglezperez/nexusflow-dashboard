@@ -66,7 +66,9 @@ function UsersPage() {
 
   return (
     <div className="pt-6 pb-6 h-full flex flex-col">
+ 
       <div className="mb-6 flex justify-end">
+
         <Button iconLeft={<FaPlus />} onClick={openAddUserModal}>
           Nuevo Usuario
         </Button>
